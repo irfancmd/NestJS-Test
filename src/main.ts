@@ -11,9 +11,12 @@ async function bootstrap() {
       // Setting this true will throw an error if any non-whitelisted property
       // (property not in DTOs) gets detected.
       forbidNonWhitelisted: true,
-      // This will try to automatically convert request url parameter to the type that
-      // an action method expects.
-      // transform: true,
+      // This is optional because typescript only matches the "Shape" of objects. But if
+      // we want the body to be transformed into and instance of a DTO, set this property
+      // to true. This will try to do necessary transformations and make the body and instance
+      // of the DTO class. It will also automatically convert url parameter to the type that
+      // the action method expects.
+      transform: true,
     }),
   ); // This is needed for using validation pipe
   await app.listen(3000);
