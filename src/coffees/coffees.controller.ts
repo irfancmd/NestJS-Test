@@ -14,6 +14,7 @@ import {
 import { CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
+import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 
 @Controller('coffees')
 export class CoffeesController {
@@ -35,11 +36,8 @@ export class CoffeesController {
 
   // We can get access to query parameters like this
   @Get()
-  findAll(@Query() queryParams) {
-    const { limit, offset } = queryParams;
-    console.log(limit, offset);
-
-    return this.coffeeservice.findAll();
+  findAll(@Query() paginationQueryDto: PaginationQueryDto) {
+    return this.coffeeservice.findAll(paginationQueryDto);
   }
 
   // If we use @Params without argument, it will capture all URL parameters

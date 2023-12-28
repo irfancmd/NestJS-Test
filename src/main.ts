@@ -17,6 +17,9 @@ async function bootstrap() {
       // of the DTO class. It will also automatically convert url parameter to the type that
       // the action method expects.
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   ); // This is needed for using validation pipe
   await app.listen(3000);
