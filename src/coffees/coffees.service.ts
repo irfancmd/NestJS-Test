@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, Scope } from '@nestjs/common';
 import { Coffee } from './entities/coffee.entity';
 import { Connection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -7,8 +7,16 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { Flavor } from './entities/flavor.entity';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { Event } from 'src/events/entities/event.entity';
+import { COFFEE_BRANDS } from './coffees.constants';
+import { ConfigService } from '@nestjs/config';
 
-@Injectable()
+// Providers can have thee scopes. Singleton (default), transient (new instance for every call)
+// and request (new instance for every request/response cycle). If we pass no argument to the
+// Injectable decorator, the default scope (singleton) will be used. Note that everything that depends
+// on this provider, will be impicitly scoped to this provider's scope as well. This means the
+// CoffeeController will be request scoped if the CoffeeService is request scoped.
+
+@Injectable({ scope: Scope.DEFAULT })
 export class CoffeesService {
   // The repository will be automatically created by TypeORM using entity the class.
   constructor(
@@ -17,7 +25,21 @@ export class CoffeesService {
     @InjectRepository(Flavor)
     private readonly flavorRepository: Repository<Flavor>,
     private readonly connection: Connection,
-  ) {}
+    // This is how we can inject a non-class provider. We must pass the "Provider Token"
+    // to the "Inject" decorator.
+    @Inject(COFFEE_BRANDS) readonly coffeeBrands: string[],
+    private readonly configService: ConfigService,
+  ) {
+    console.log(coffeeBrands);
+
+    // We can access environment variables from the config service WITH type safety.
+    // The second argument is the default/fallback value.
+    const database_host = this.configService.get<string>(
+      'DATABASE_HOST',
+      'localhost',
+    );
+    console.log(database_host);
+  }
 
   findAll(paginationQueryDto: PaginationQueryDto) {
     const { limit, offset } = paginationQueryDto;

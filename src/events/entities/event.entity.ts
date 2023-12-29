@@ -13,6 +13,6 @@ export class Event {
   @Index() // A simple index will be created for "name".
   name: string;
 
-  @Column()
+  @Column('json')
   payload: Record<string, any>;
 }
