@@ -8,10 +8,11 @@ import { Flavor } from './entities/flavor.entity';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { Event } from 'src/events/entities/event.entity';
 import { COFFEE_BRANDS } from './coffees.constants';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService, ConfigType } from '@nestjs/config';
+import coffeesConfig from './config/coffees.config';
 
-// Providers can have thee scopes. Singleton (default), transient (new instance for every call)
-// and request (new instance for every request/response cycle). If we pass no argument to the
+// Providers can have thee scopes. Singleton (default), transient (separate instance for every dependant)
+// and request (new instance for every request). If we pass no argument to the
 // Injectable decorator, the default scope (singleton) will be used. Note that everything that depends
 // on this provider, will be impicitly scoped to this provider's scope as well. This means the
 // CoffeeController will be request scoped if the CoffeeService is request scoped.
@@ -29,16 +30,35 @@ export class CoffeesService {
     // to the "Inject" decorator.
     @Inject(COFFEE_BRANDS) readonly coffeeBrands: string[],
     private readonly configService: ConfigService,
+
+    // Safe way of reading from configuration namespace
+    @Inject(coffeesConfig.KEY)
+    private readonly coffeesConfiguration: ConfigType<typeof coffeesConfig>
   ) {
     console.log(coffeeBrands);
 
     // We can access environment variables from the config service WITH type safety.
     // The second argument is the default/fallback value.
-    const database_host = this.configService.get<string>(
-      'DATABASE_HOST',
-      'localhost',
-    );
-    console.log(database_host);
+    // const database_host = this.configService.get<string>(
+    //   'DATABASE_HOST',
+    //   'localhost',
+    // );
+
+    // The configService also allows us to read configuration from a configuration object like this:
+    // const database_host = this.configService.get<string>(
+    //   'database.host',
+    //   'localhost',
+    // );
+
+    // console.log(database_host);
+
+    // Safe way of reading from configuration namespace
+    console.log(coffeesConfiguration.foo);
+
+    // Alternative but type unsaafe way of reading from configuration namespace
+    // This doesn't require the @Inject()
+    // const coffeesConfig = this.configService.get('coffees.foo');
+    // console.log(coffeesConfig);
   }
 
   findAll(paginationQueryDto: PaginationQueryDto) {
@@ -132,7 +152,7 @@ export class CoffeesService {
     }
   }
 
-  private async preloadFlavorByName(flavorName: string) {
+  private async preloadFlavorByName(flavorName: string): Promise<Flavor> {
     const existingFlavor = await this.flavorRepository.findOne({
       where: {
         name: flavorName,

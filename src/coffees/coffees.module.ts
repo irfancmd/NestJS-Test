@@ -7,6 +7,7 @@ import { Flavor } from './entities/flavor.entity';
 import { Event } from 'src/events/entities/event.entity';
 import { COFFEE_BRANDS } from './coffees.constants';
 import { ConfigModule } from '@nestjs/config';
+import coffeesConfig from './config/coffees.config';
 
 // For Demo
 class MockCoffeeService {}
@@ -25,7 +26,12 @@ export class CoffeeBrandsFactory {
   imports: [
     TypeOrmModule.forFeature([Coffee, Flavor, Event]),
     // Since we already used forRoot in the AppModule, we can inject ConfigModule directly here
-    ConfigModule,
+
+    // Full Config Module Registration
+    // ConfigModule,
+
+    // Partial Config Module Registration
+    ConfigModule.forFeature(coffeesConfig)
   ],
   controllers: [CoffeesController],
   providers: [
@@ -41,6 +47,18 @@ export class CoffeeBrandsFactory {
     //   useFactory: (coffeeBrandsFactory: CoffeeBrandsFactory) =>
     //     coffeeBrandsFactory.create(),
     // },
+
+    // We can inject providers whose initialiation is asynchronous using the useFactory method as well.
+    // In such cases, NestJs will automatically resolve those promises while injecting the dependency.
+    // {
+    //   provide: COFFEE_BRANDS,
+    //   inject: [Connection],
+    //   useFactory: async (connection: Connection) : Promise<string[]> =>
+    //   // const coffeeBrands = await connection.query('SELECT * FROM ...');
+    //     const coffeeBrands = await Promise.resolve(['buddy brew', 'nescafe']);
+    //     return coffeeBrands;
+    // },
+
   ],
   // We can customize which instance should be passed to the dependency injector using
   // the "longhand" syntax like this.

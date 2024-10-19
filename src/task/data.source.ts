@@ -5,8 +5,8 @@ export const dataSourceOptions: DataSourceOptions = {
   host: 'localhost',
   port: 5432,
   username: 'postgres',
-  password: 'pass123',
-  database: 'postgres',
+  password: 'toor',
+  database: 'test_nestjs',
   // This will sync Type ORM entities with database, which means it will generate
   // SQL table for all entity classes that are found. This is useful for
   // development. Make sure to TURN IT OFF during PRODUCTION.

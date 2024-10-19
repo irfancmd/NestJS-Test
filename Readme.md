@@ -21,3 +21,24 @@
 - Configuration factory using ConfigModule where realated configurations can be grouped
   into `.ts` files. (Acceptable for small applications).
 - Configuration namespaces. (Useful for large applications).
+
+# NestJS Sample Commands
+
+## Example filter generation command
+
+`nest g filter common/filters/http-exception`
+
+## Example guard generation command
+`nest g guard common/guards/api-key`
+
+## Example module generation command
+`nest g mo common`
+
+## Example interceptor generation command
+`nest g interceptor common/interceptors/wrap-response`
+
+## Example pipe generation command
+`nest g pipe common/pipes/parse-int`
+
+## Example middleware generation command
+`nest g middleware common/middleware/logging`
