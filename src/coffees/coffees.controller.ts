@@ -18,7 +18,9 @@ import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { PaginationQueryDto } from 'src/common/dto/pagination-query.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Protocol } from 'src/common/decorators/protocol.decorator';
+import { ApiForbiddenResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+// @ApiTags('Custom Coffee Tag') // For Swagger. Optional. Default is the Controller's name.
 @Controller('coffees')
 export class CoffeesController {
   constructor(private coffeeservice: CoffeesService) {}
@@ -38,6 +40,7 @@ export class CoffeesController {
   // }
 
   
+  @ApiForbiddenResponse({ description: 'Forbidden.'}) // For Swagger. Optional.
   @Public() // Our own decorator that make this method work without authorization.
   @Get()
   // We can get access to query parameters using the @Query decorator.

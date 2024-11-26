@@ -5,6 +5,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception/http-except
 import { ApiKeyGuard } from './common/guards/api-key/api-key.guard';
 import { WrapResponseInterceptor } from './common/interceptors/wrap-response/wrap-response.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout/timeout.interceptor';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -38,6 +39,16 @@ async function bootstrap() {
 
   // Sample interceptor
   app.useGlobalInterceptors(new WrapResponseInterceptor(), new TimeoutInterceptor());
+
+  // Swaagger Settings
+  const swaggerOptions = new DocumentBuilder()
+    .setTitle('NestJS Test')
+    .setDescription('Coffee Application')
+    .setVersion('1.0')
+    .build();
+
+  const swaggerDocument = SwaggerModule.createDocument(app, swaggerOptions);
+  SwaggerModule.setup('api', app, swaggerDocument);
 
   await app.listen(3000);
 }
